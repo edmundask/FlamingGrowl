@@ -15,7 +15,8 @@ sending notifications from your CodeIgniter application to a desired computer.
 1. Download FlamingGrowl
 2. Copy the files to your application folder
 3. Set up flaming_growl.php configuration file to meet your needs
-4. Make sure that you have [Growl for Windows](http://www.growlforwindows.com/) installed and the specified port open on your computer (default port is 25053)
+4. Make sure that you have [Growl for Windows](http://www.growlforwindows.com/) installed and the specified port open on your computer (default port is 23053)
+5. Don't forget to adjust Security settings in [Growl for Windows](http://www.growlforwindows.com/) (allow notifications from websites, add at least one password).
 
 # Usage
 
@@ -48,7 +49,7 @@ array
 (
     'application_name'      =>	'My Application',
     'host'                  =>	'localhost',
-    'port'                  =>	25053,
+    'port'                  =>	23053,
     'timeout'               =>	10,
     'password'              =>  'my_password'
 ));
@@ -70,7 +71,7 @@ If you have successfully registered an application, you can start sending NOTIFY
 
 * **$text** - a short description of the notification.
 
-* **$options** - by default FlamingGrawl will use settings from the config file and the array specified when registering an application, but you can also set notification related options here.
+* **$options** - by default FlamingGrowl will use settings from the config file and the array specified when registering an application, but you can also set notification related options here.
 
 ### Example
 
