@@ -260,9 +260,6 @@ class FlamingGrowl
 
 				$headers	.=	"GNTP/". $this->CI->config->item('gntp_version') ." NOTIFY $encryption $hash \r\n";
 
-				echo $options['application_name'];
-				echo '<br>';
-
 				$headers	.=	"Application-Name: ". $options['application_name'] ." \r\n";
 				$headers	.=	"Notification-Name: ". $options['name'] ." \r\n";
 
