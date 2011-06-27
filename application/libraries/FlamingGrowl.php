@@ -14,10 +14,14 @@
  * @subpackage	Libraries
  * @category	Libraries
  * @author		Edmundas Kondrašovas <as@edmundask.lt>
+ * @license		http://www.opensource.org/licenses/MIT
  * @link		http://github.com/edmundask/FlamingGrowl
- * @version		0.7
+ * @version		0.8
+ * @copyright	Copyright (c) 2011 Edmundas Kondrašovas <as@edmundask.lt>
  *
  */
+
+define('FLAMING_GROWL', '0.8');
 
 class FlamingGrowl
 {
@@ -150,13 +154,47 @@ class FlamingGrowl
 	}
 
 	/**
+	* Send a SUBSCRIBE request
+	*
+	* @access	public
+	* @param	string a unique id (UUID) that identifies the subscriber
+	* @param	string friendly name of the subscribing machine
+	* @param	int the port that the subscriber will listen for notifications on 
+	* @return	void
+	*/
+
+	public function subscribe($id, $name, $port = 23053)
+	{
+		$subscribe_options	=	$this->CI->config->item('subscribe');
+
+		$subscribe_options['id'] = $id;
+		$subscribe_options['name'] = $name;
+		$subscribe_options['port'] = ($port != 23053) ? $port : $subscribe_options['port'];
+
+		$this->CI->config->set_item('subscribe', $subscribe_options);
+
+		$request = $this->_form_request('subscribe', NULL);
+
+		$resource = $this->_connect($this->CI->config->item('host', 'gntp'),
+									$this->CI->config->item('port', 'gntp'),
+									$this->CI->config->item('timeout', 'gntp'));
+
+		if($resource)
+		{
+			$this->_send_request($resource, $request);
+			$this->_catch_response($resource);
+			fclose($resource);
+		}
+	}
+
+	/**
 	* Initiate a new socket connection
 	*
 	* @access	private
 	* @param	string hostname
 	* @param	int port number
 	* @param	int socket connection timeout (in seconds) 
-	* @return	resource/bool
+	* @return	mixed resource pointer or bool value
 	*/
 
 	private function _connect($host, $port, $timeout)
@@ -258,9 +296,20 @@ class FlamingGrowl
 
 			break;
 
-			// No support for SUBSCRIBE requests yet...
 			case 'subscribe':
+
+				$headers	.=	"GNTP/". $this->CI->config->item('gntp_version') ." SUBSCRIBE $encryption $hash \r\n";
+
+				$headers	.=	"Subscriber-ID: ". $this->CI->config->item('id', 'subscribe') ." \r\n";
+				$headers	.=	"Subscriber-Name: ". $this->CI->config->item('name', 'subscribe') ." \r\n";
+				$headers	.=	"Subscriber-Port: ". $this->CI->config->item('port', 'subscribe') ." \r\n";
+					
+				$headers	.=	"\r\n \r\n";
+				
 			break;
+
+			$headers		.=	"Origin-Software-Name: FlamingGrowl \r\n";
+			$headers		.=	"Origin-Software-Version: ". FLAMING_GROWL ." \r\n";
 		}
 
 		return $headers;
@@ -310,7 +359,7 @@ class FlamingGrowl
 
 	private function _send_request($resource, $request)
 	{
-		fwrite($resource, $request);
+		return fwrite($resource, $request);
 	}
 
 	/**
@@ -358,17 +407,35 @@ class FlamingGrowl
 		return true;
 	}
 
+	/**
+	* Convert bool value or string to compatible bool string
+	*
+	* Used for converting boolean values or strings to 
+	* compatible boolean strings so that they would be 
+	* displayed and intepreted correctly in request headers.
+	*
+	* @access	private
+	* @param	mixed boolean value or string
+	* @return	string True/False in string format
+	*/
+
     private function _toBool($value)
     {
-        if (preg_match('/^([Tt]rue|[Yy]es)$/', $value)) {
+        if (preg_match('/^([Tt]rue|[Yy]es)$/', $value)) 
+        {
             return 'True';
         }
-        if (preg_match('/^([Ff]alse|[Nn]o)$/', $value)) {
+
+        if (preg_match('/^([Ff]alse|[Nn]o)$/', $value)) 
+        {
             return 'False';
         }
-        if ((bool)$value === true) {
+
+        if ((bool)$value === true) 
+        {
             return 'True';
         }
+
         return 'False';
     }
 

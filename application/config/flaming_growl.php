@@ -173,8 +173,14 @@ $config['notify']['callback_target'] = '';
 |
 */
 
-// Not present in the current version of FlamingGrowl
-$config['subscribe'] = array();
+// Subscriber-ID: <string>
+$config['subscribe']['id'] = '';
+
+// Subscriber-Name: <string>
+$config['subscribe']['name'] = '';
+
+// (Optional) Subscriber-Port: <int>
+$config['subscribe']['port'] = 23053;
 
 
 /* End of file flaming_growl.php */
