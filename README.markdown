@@ -103,3 +103,21 @@ $options = array('sticky' => false, 'icon' => 'http://website.com/icon.png');
 
 $this->growl->notify('UPDATE', 'New user', 'New user has registered on the website', $options);
 ```
+
+## SUBSCRIBE requests
+
+`$this->growl->subscribe($id, $name, $port);`
+
+* **$id** - A unique id (UUID) that identifies the subscriber
+* **$name** - The friendly name of the subscribing machine
+* **$port** - (Optional) port that the subscriber will listen for notifications on (default 23053)
+
+In order to get an OK response after sending a SUBSCRIBE request, make sure Growl allows subscribtions (Growl for Windows: 'Allow clients to subscribe to notifications').
+
+### Example
+
+```
+$unique_id = '0f8e3530-7a29-11df-93f2-0800200c9a66';
+
+$this->growl->subscribe($unique_id, 'FlamingGrowl Subscriber');
+```
